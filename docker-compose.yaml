@@ -1,0 +1,32 @@
+version: "3"
+services:
+  minio-x-elysia:
+    image: 'bitnami/minio:latest'
+    container_name: minio-x-elysia
+    networks:
+      - minio-x-elysia-networks
+    ports:
+      - '90:9000'
+      - '91:9001'
+    environment:
+      - MINIO_ROOT_USER=minio-root-user
+      - MINIO_ROOT_PASSWORD=minio-root-password
+    volumes:
+      - ./minio_data:/data
+  api-elysia-x-minio:
+    image: 'elysia-x-minio'
+    container_name: elysia-x-minio
+    networks:
+      - minio-x-elysia-networks
+    ports:
+      - '3000:3000'
+    environment:
+      - MINIO_ENDPOINT=host.docker.internal
+      - MINIO_PORT=90
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+    env_file:
+      - ./.env
+networks:
+  minio-x-elysia-networks:
+    external: true
