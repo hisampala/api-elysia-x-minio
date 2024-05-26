@@ -1,7 +1,12 @@
 import { Elysia } from "elysia";
-
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
-
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+import { download_handle, upload_handle } from "./application/controllers";
+const app = new Elysia();
+app.get("/", () => "Hello Elysia X Minio");
+const upload = app.group("/upload", upload_handle);
+const download = app.group("/download", download_handle);
+app.listen(process.env.PORT ?? 3000, ({ hostname, port }) => {
+  console.log(`🦊 Elysia X Minio is running  at http://${hostname}:${port}`);
+  app.routes.map((route) =>
+    console.log(`[${route.path}] [${route.method}] :${route.handler.name}`),
+  );
+});
